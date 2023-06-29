@@ -770,7 +770,7 @@ func qperfClient(serverHost string, workItemType, msgSize int) (rv string) {
 	switch {
 	case workItemType == qperfTCPTest:
 		output, success := cmdExec(qperfPath, []string{
-			qperfPath, "-ip", "19766", "-m", str(msgSize), serverHost, "tcp_bw", "tcp_lat",
+			qperfPath, "--use_bits_per_sec", "-ip", "19766", "-m", str(msgSize), serverHost, "tcp_bw", "tcp_lat",
 		}, 15)
 		if success {
 			rv = output
