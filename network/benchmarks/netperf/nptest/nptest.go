@@ -70,16 +70,19 @@ var datapointsFlushed bool
 var globalLock sync.Mutex
 
 const (
-	workerMode           = "worker"
-	orchestratorMode     = "orchestrator"
-	iperf3Path           = "/usr/local/bin/iperf3"
-	qperfPath            = "/usr/local/bin/qperf"
-	netperfPath          = "/usr/local/bin/netperf"
-	netperfServerPath    = "/usr/local/bin/netserver"
-	outputCaptureFile    = "/tmp/output.txt"
-	mssMin               = 96
-	mssMax               = 1460
-	mssStepSize          = 64
+	workerMode        = "worker"
+	orchestratorMode  = "orchestrator"
+	iperf3Path        = "/usr/local/bin/iperf3"
+	qperfPath         = "/usr/local/bin/qperf"
+	netperfPath       = "/usr/local/bin/netperf"
+	netperfServerPath = "/usr/local/bin/netserver"
+	outputCaptureFile = "/tmp/output.txt"
+	mssMin            = 0
+	mssMax            = 9000
+	mssStepSize       = 1440
+	// TODO - change msgSize algo used by qperf to match iperf mss
+	// There is no reason to test mgs sizes bigger than supported
+	// jumbo frames
 	msgSizeMax           = 1 << 16
 	msgSizeMin           = 1
 	parallelStreams      = "8"
