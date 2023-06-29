@@ -441,6 +441,15 @@ func parseIperfTCPBandwidth(output string) string {
 	return "0"
 }
 
+func parseIperfTCPRetrans(output string) string {
+	// Parses the output of iperf3 and grabs the summary retransmits from the output
+	match := iperfTCPOutputRegexp.FindStringSubmatch(output)
+	if match != nil && len(match) > 1 {
+		return match[2]
+	}
+	return "err"
+}
+
 func parseQperfTCPLatency(output string) string {
 	squeeze := func(s string) string {
 		return strings.Join(strings.Fields(s), " ")
@@ -505,8 +514,10 @@ func (t *NetPerfRPC) ReceiveOutput(data *WorkerOutput, reply *int) error {
 
 	var outputLog string
 	var bw string
+	var retrans string
 	var cpuSender string
 	var cpuReceiver string
+	var allData string
 
 	switch data.Type {
 	case iperfTCPTest:
@@ -515,8 +526,10 @@ func (t *NetPerfRPC) ReceiveOutput(data *WorkerOutput, reply *int) error {
 			"from", testcase.SourceNode, "to", testcase.DestinationNode, "MSS:", mss) + data.Output
 		writeOutputFile(outputCaptureFile, outputLog)
 		bw = parseIperfTCPBandwidth(data.Output)
+		retrans = parseIperfTCPRetrans(data.Output)
 		cpuSender, cpuReceiver = parseIperfCPUUsage(data.Output)
-		registerDataPoint(testcase.Label, mss, bw, currentJobIndex)
+		allData = fmt.Sprintf("(%s; Retransmits %s; Sender CPU %s; Receiver CPU %s)", bw, retrans, cpuSender, cpuReceiver)
+		registerDataPoint(testcase.Label, mss, allData, currentJobIndex)
 
 	case qperfTCPTest:
 		msgSize := testcases[currentJobIndex].MsgSize / 2
